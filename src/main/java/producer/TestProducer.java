@@ -18,14 +18,13 @@ public class TestProducer {
     }
 
     public void produce() {
-        Producer<String, String> producer = new Producer<String, String>(config);
+        Producer<Integer, String> producer = new Producer<>(config);
 
-        for (int i = 0; i < NO_EVENTS; i++) {
+        for (int key = 0; key < NO_EVENTS; key++) {
 
-            String key = String.valueOf(i);
-            String msg = "no." + i;
+            String msg = "no." + key;
 
-            KeyedMessage<String, String> data = new KeyedMessage<String, String>(TOPIC, key, msg);
+            KeyedMessage<Integer, String> data = new KeyedMessage<>(TOPIC, key, msg);
             producer.send(data);
         }
         producer.close();
@@ -40,9 +39,10 @@ public class TestProducer {
 
     private static Properties buildProperties() {
         Properties props = new Properties();
-        props.put("metadata.broker.list", "localhost:9093");
+        props.put("metadata.broker.list", "localhost:9092");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
-        props.put("partitioner.class", "SimplePartitioner");
+        props.put("key.serializer.class", "producer.IntegerEncoder");
+        props.put("partitioner.class", "producer.SimplePartitioner");
         props.put("request.required.acks", "1");
         return props;
     }
